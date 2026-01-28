@@ -7,3 +7,18 @@ impl Store {
         Self { name }
     }
 }
+
+//const MIGRATIONS = get_migrations();
+
+fn get_migrations() -> Vec<String> {
+    include_str!("../resources/schema.sql")
+        .split("----")
+        .filter_map(|p| {
+            if p.trim().starts_with("#") {
+                None
+            } else {
+                Some(p.trim().to_string())
+            }
+        })
+        .collect()
+}
