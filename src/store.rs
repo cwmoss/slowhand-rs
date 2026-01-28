@@ -8,8 +8,6 @@ impl Store {
     }
 }
 
-//const MIGRATIONS = get_migrations();
-
 fn get_migrations() -> Vec<String> {
     include_str!("../resources/schema.sql")
         .split("----")
