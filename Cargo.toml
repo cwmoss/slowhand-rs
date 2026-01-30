@@ -1,8 +1,26 @@
 [package]
-name = "slowhand-rs"
+name = "slowhand"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+
+[[bin]]
+name = "kdl"
+path = "src/sdl/kdl.rs"
+
+[[bin]]
+name = "kdlrs"
+path = "src/sdl/kdlrs.rs"
+
+[[bin]]
+name = "styx"
+path = "src/sdl/styx.rs"
 
 [dependencies]
 tokio = { version = "1.49.0", features = ["full"] }
 turso = "0.4.3"
+knus = "3.3.1"
+miette = { version = "7.6.0", features = ["fancy"] }
+facet = "0.43.2"
+facet-styx = "1.0.1"
+kdl = "6.5.0"
+serde_json = "1.0.149"

@@ -1,0 +1,29 @@
+person doc {
+    title person
+    preview name company.name
+}
+
+alumni doc {
+    title person
+    preview name company.name
+}
+
+company doc {
+    preview address.plz name js="""
+    `adresse: ${add.0 + add.plz}`
+    """
+    name text
+    address address
+    ceo ref=person|alumni {
+        title CEO
+        component "lib/ceo-input.js"
+    }
+}
+
+address {
+    plz
+    city {
+        title Stadt
+    }
+    street
+}
