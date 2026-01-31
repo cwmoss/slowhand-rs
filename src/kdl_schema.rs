@@ -1,9 +1,10 @@
-use crate::schema;
+use crate::schema::{self, ObjectType};
 use kdl::{KdlDocument, KdlValue};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 impl schema::Schema {
     pub fn load_from_kdl(name: &str, base: &PathBuf) -> Self {
@@ -18,7 +19,10 @@ impl schema::Schema {
                 Some(t) => t.value().as_string().unwrap_or("object"),
                 None => &"object",
             };
-            let o = schema::Object::new(node.name().value(), ty);
+            let o = schema::Object::from_kdl(
+                node.name().value(),
+                ObjectType::from_str(ty).expect("unable to parse object type"),
+            );
             s.add_object(o);
             println!("{} type: {}", node.name(), ty);
         }
@@ -27,8 +31,8 @@ impl schema::Schema {
 }
 
 impl schema::Object {
-    pub fn from_kdl(name: String, ty: String) -> Self {
-        let o = Self::new(&name, &ty);
+    pub fn from_kdl(name: &str, ty: ObjectType) -> Self {
+        let o = Self::new(&name, ty);
         o
     }
 }

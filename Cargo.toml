@@ -31,3 +31,7 @@ facet-styx = "1.0.1"
 kdl = "6.5.0"
 serde_json = "1.0.149"
 serde = { version = "1.0.228", features = ["derive"] }
+strum = "0.27.2"
+strum_macros = "0.27.2"
+rand = "0.9.2"
+base64 = "0.22.1"
