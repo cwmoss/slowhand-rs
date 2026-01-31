@@ -1,0 +1,111 @@
+images:
+  defaultImage:
+    fields:
+      caption:
+
+obj:
+  castMember:
+    fields:
+      characterName:
+      person:
+        type: reference
+        to: person
+      externalId:
+        type: number
+      externalCreditId:
+        xcomponent: ()=>{say(`hi`)}
+    preview:
+      title: js`${o.person?.title} (imdb ${o.externalId})`
+      subtitle: characterName
+      media: person.media
+  crewMember:
+    fields:
+      department:
+      job:
+      person:
+        type: reference
+        to: person
+      externalId:
+        type: number
+      externalCreditId:
+    preview:
+      title: person.title
+      subtitle: js`${o.job} - ${o.department}`
+      media: person.media
+  balance:
+    fields:
+      costs:
+        type: number
+      revenue:
+        type: number
+
+doc:
+  movie:
+    preview:
+      title: title
+      media: poster
+    fields:
+      title:
+      slug:
+        type: slug
+        source: title
+      overview:
+        type: text
+      releaseDate:
+        type: datetime
+      externalId:
+        type: number
+      popularity:
+        type: number
+      poster:
+        type: defaultImage
+        options:
+          hotspot: true
+      castMembers:
+        type: array
+        of: castMember
+      crewMembers:
+        type: array
+        of: crewMember
+      balance:
+        type: balance
+
+  person:
+    icon: person
+    preview:
+      title: name slug.current
+    fields:
+      name:
+      slug:
+        type: slug
+        source: name
+      image:
+        type: defaultImage
+        options:
+          hotspot: true
+  screening:
+    fields:
+      title:
+      movie:
+        type: reference
+        to: movie
+      published:
+        type: boolean
+      location:
+        type: geopoint
+      beginAt:
+        type: datetime
+      endsAt:
+        type: datetime
+      allowedGuests:
+        type: string
+        list:
+          - members
+          - friends
+          - anyone
+        layout:
+          - radio
+      infoUrl:
+        type: url
+      ticket:
+        type: file

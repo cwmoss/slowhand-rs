@@ -13,10 +13,10 @@ world prop=string-value {
     child #inf
 }
 "#;
-    let doc_str = fs::read_to_string("js/schema.kdl").unwrap();
+    let doc_str = fs::read_to_string("projects/movies/movies.kdl").unwrap();
     let doc: KdlDocument = doc_str.parse().expect("failed to parse KDL");
-    let printfomat = "the doc: \n{}";
-    println!("the doc: \n{}", doc);
+    dbg!(&doc);
+    println!("the doc: \n{}", &doc);
     // println!("json: {}", json!({document: doc}));
     // dbg!(doc);
     return;

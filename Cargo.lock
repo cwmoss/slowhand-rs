@@ -1839,6 +1839,7 @@ dependencies = [
  "kdl",
  "knus",
  "miette",
+ "serde",
  "serde_json",
  "tokio",
  "turso",
