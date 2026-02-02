@@ -2,26 +2,23 @@
 
 
 CREATE TABLE IF NOT EXISTS docs (
-    body JSON,
-    _id TEXT GENERATED ALWAYS AS (json_extract(body, '$._id'))
-        VIRTUAL
+    _id TEXT 
         NOT NULL
         ,
-    _type TEXT GENERATED ALWAYS AS (json_extract(body, '$._type'))
-        VIRTUAL
+    _type TEXT 
         NOT NULL
         ,
-    _createdAt TEXT GENERATED ALWAYS AS (json_extract(body, '$._createdAt'))
-        VIRTUAL
+    _createdAt TEXT 
         NOT NULL
         ,
-    _updatedAt TEXT GENERATED ALWAYS AS (json_extract(body, '$._updatedAt'))
-        VIRTUAL
+    _updatedAt TEXT 
         NOT NULL
        ,
-    _rev TEXT GENERATED ALWAYS AS (json_extract(body, '$._rev'))
-        VIRTUAL
+    _rev TEXT 
         NOT NULL
+        ,
+    body JSON,
+    _btext TEXT 
 )
 ----
 CREATE INDEX IF NOT EXISTS docs_id on docs(_id)
@@ -30,23 +27,25 @@ CREATE INDEX IF NOT EXISTS docs_type on docs(_type)
 ----
 CREATE INDEX IF NOT EXISTS docs_created_at on docs(_createdAt)
 ----
-CREATE TRIGGER IF NOT EXISTS docs_update_notify 
+#CREATE INDEX IF NOT EXISTS docs_fts ON docs USING fts (_btext);
+----
+#CREATE TRIGGER IF NOT EXISTS docs_update_notify 
    AFTER UPDATE
    ON docs
 BEGIN
     SELECT notify_update(new._id, new._type, new.body);
 END
 ----
-CREATE TRIGGER IF NOT EXISTS docs_insert_notify 
+#CREATE TRIGGER IF NOT EXISTS docs_insert_notify 
    AFTER INSERT
    ON docs
 BEGIN
     SELECT notify_insert(new._id, new._type, new.body);
 END
 ----
-CREATE VIRTUAL TABLE IF NOT EXISTS docs_fts USING fts5( _id, _type, btext)
+#CREATE VIRTUAL TABLE IF NOT EXISTS docs_fts USING fts5( _id, _type, btext)
 ----
-#CREATE TRIGGER IF NOT EXISTS docs_update_fts 
+####CREATE TRIGGER IF NOT EXISTS docs_update_fts 
    AFTER UPDATE
    ON docs
 BEGIN
@@ -56,7 +55,7 @@ BEGIN
         ) WHERE _id=new._id;
 END
 ----
-#CREATE TRIGGER IF NOT EXISTS docs_insert_fts 
+####CREATE TRIGGER IF NOT EXISTS docs_insert_fts 
    AFTER INSERT
    ON docs
 BEGIN
@@ -64,7 +63,7 @@ BEGIN
         SELECT new._id, group_concat(b.key || ': ' ||  b.value, x'0a') as btext from json_tree(new.body) b where b.atom not null;
 END
 ----
-#CREATE TRIGGER IF NOT EXISTS docs_delete_fts 
+####CREATE TRIGGER IF NOT EXISTS docs_delete_fts 
    AFTER DELETE
    ON docs
 BEGIN
@@ -76,16 +75,13 @@ CREATE TABLE IF NOT EXISTS revisions (
     action TEXT NOT NULL,
     actionAt DATE DEFAULT CURRENT_TIMESTAMP,
     oldbody JSON,
-    _id TEXT GENERATED ALWAYS AS (json_extract(oldbody, '$._id'))
-        VIRTUAL
+    _id TEXT 
         NOT NULL
         ,
-    _type TEXT GENERATED ALWAYS AS (json_extract(oldbody, '$._type'))
-        VIRTUAL
+    _type TEXT 
         NOT NULL
         ,
-    _updatedAt TEXT GENERATED ALWAYS AS (json_extract(oldbody, '$._updatedAt'))
-        VIRTUAL
+    _updatedAt TEXT 
         NOT NULL
     )
 ----
@@ -95,7 +91,7 @@ CREATE INDEX IF NOT EXISTS revisions_revid on revisions(revid)
 ----
 CREATE INDEX IF NOT EXISTS revisions_at on revisions(_updatedAt)
 ----
-CREATE TRIGGER IF NOT EXISTS docs_update_revisions
+#CREATE TRIGGER IF NOT EXISTS docs_update_revisions
    AFTER UPDATE
    ON docs
 BEGIN
@@ -103,7 +99,7 @@ BEGIN
         SELECT old._rev, 'update', old.body;
 END
 ----
-#CREATE TRIGGER IF NOT EXISTS docs_insert_revisions 
+####CREATE TRIGGER IF NOT EXISTS docs_insert_revisions 
    AFTER INSERT
    ON docs
 BEGIN
@@ -111,7 +107,7 @@ BEGIN
         SELECT new._rev, 'insert', new.body;
 END
 ----
-CREATE TRIGGER IF NOT EXISTS docs_delete_revisions 
+#CREATE TRIGGER IF NOT EXISTS docs_delete_revisions 
    AFTER DELETE
    ON docs
 BEGIN

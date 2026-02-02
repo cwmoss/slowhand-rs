@@ -1,6 +1,9 @@
 use std::env;
 use std::path::PathBuf;
 
+use crate::dataset::Dataset;
+
+#[derive(Clone)]
 pub struct Config {
     pub base: PathBuf,
     pub var: PathBuf,
@@ -21,6 +24,10 @@ impl Config {
     pub fn setup(&self) {
         std::fs::create_dir_all(&self.var).unwrap();
         std::fs::create_dir_all(&self.projects).unwrap();
+    }
+
+    pub async fn system_dataset(&self) -> Dataset {
+        Dataset::load("_system".to_string(), &self.projects, &self.var).await
     }
 }
 

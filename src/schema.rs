@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use strum_macros::EnumString;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Schema {
     pub base: PathBuf,
     pub name: String,
@@ -17,7 +17,7 @@ pub struct Schema {
     reference_types: Vec<String>,
     document_types: Vec<String>,
 }
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Object {
     name: String,
     ty: ObjectType,
@@ -88,9 +88,7 @@ impl Schema {
         let ty = o.ty.clone();
         match ty {
             ObjectType::Image => self.image_types.push(ty),
-            _ => self
-                .object_types
-                .push(ObjectType::Custom("person".to_string())),
+            _ => self.object_types.push(ty),
         }
         self.objects.insert(o.name.to_string(), o);
     }

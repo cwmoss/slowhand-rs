@@ -1,18 +1,25 @@
 use crate::schema::{self, ObjectType};
 use kdl::{KdlDocument, KdlValue};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+//use std::collections::HashMap;
+//use std::error::Error;
+use anyhow::Result;
 use std::fs;
+// use std::io;
 use std::path::PathBuf;
 use std::str::FromStr;
 
+enum SchemaError {
+    KdlError,
+    IoError,
+}
 impl schema::Schema {
-    pub fn load_from_kdl(name: &str, base: &PathBuf) -> Self {
+    pub fn load_from_kdl(name: &str, base: &PathBuf) -> Result<Self> {
         let mut s = Self::new(name, base);
         let mut path = s.base.join(&s.name);
         path.add_extension("kdl");
-        let doc_str = fs::read_to_string(path).unwrap();
-        let doc: KdlDocument = doc_str.parse().expect("failed to parse KDL");
+        let doc_str = fs::read_to_string(path)?;
+        let doc: KdlDocument = doc_str.parse()?;
         for node in doc.nodes().into_iter() {
             //let ty = node.entry(0).unwrap_or("object")
             let ty = match node.entry(0) {
@@ -26,7 +33,7 @@ impl schema::Schema {
             s.add_object(o);
             println!("{} type: {}", node.name(), ty);
         }
-        s
+        Ok(s)
     }
 }
 
