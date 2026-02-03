@@ -58,7 +58,7 @@ impl schema::Schema {
                 }
                 println!("  -- props/args {:?} {:?}", e.name(), e.value());
             }
-            handle_object(o, node.children());
+            // handle_object(o, node.children());
             s.add_object(o);
             println!("{} type: {}", node.name(), base_type);
         }
@@ -72,7 +72,7 @@ impl schema::Object {
         o
     }
 }
-
+/*
 fn handle_object(o: Object, doc: Option<KdlDocument>) {
     let Some(doc) = doc else {
         return;
@@ -113,3 +113,4 @@ fn handle_object(o: Object, doc: Option<KdlDocument>) {
         println!("{} type: {}", node.name(), base_type);
     }
 }
+*/

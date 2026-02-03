@@ -11,9 +11,6 @@ use std::time::Instant;
 use turso::Builder;
 
 use crate::{config::Config, dataset::Dataset, schema::Schema, store::Doc};
-use serde_json::json;
-use std::sync::Arc;
-
 use axum::{
     body::{Body, Bytes},
     extract::{DefaultBodyLimit, FromRequest, Multipart, Path, Query, Request, State},
@@ -24,6 +21,9 @@ use axum::{
     serve::Listener,
     Router,
 };
+use rust_embed::Embed;
+use serde_json::json;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -68,6 +68,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // .route("/_assets/{*file}", get(static_handler))
         // .route("/stats", get(stats_handler))
         // .route("/", get(if_single_album_redirect))
+        .route("/favicon.ico", get(favicon))
         .with_state(state)
         .fallback_service(get(not_found));
 
@@ -129,3 +130,34 @@ https://github.com/bearcove/styx
 
 
 */
+
+#[derive(Embed)]
+#[folder = "public/"]
+struct Asset;
+
+pub struct StaticFile<T>(pub T);
+
+impl<T> IntoResponse for StaticFile<T>
+where
+    T: Into<String>,
+{
+    fn into_response(self) -> Response {
+        let path = self.0.into();
+
+        match Asset::get(path.as_str()) {
+            Some(content) => {
+                let mime = mime_guess::from_path(path).first_or_octet_stream();
+                ([(header::CONTENT_TYPE, mime.as_ref())], content.data).into_response()
+            }
+            None => (StatusCode::NOT_FOUND, "404 Not Found").into_response(),
+        }
+    }
+}
+
+async fn favicon() -> impl IntoResponse {
+    StaticFile("favicon.ico")
+}
+
+async fn static_handler(Path(path): Path<String>) -> impl IntoResponse {
+    StaticFile(path)
+}
