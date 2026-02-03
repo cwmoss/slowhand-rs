@@ -27,7 +27,7 @@ crewMember {
     externalCreditId
 }
 
-balance {
+balance title=finanial {
     costs number
     revenue number
 }

@@ -1,8 +1,9 @@
 pub mod config;
 pub mod dataset;
 pub mod dataset_handler;
-pub mod kdl_schema;
+pub mod gql;
 pub mod schema;
+pub mod schema_kdl;
 pub mod store;
 
 use std::collections::HashMap;

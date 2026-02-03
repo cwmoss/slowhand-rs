@@ -6,27 +6,29 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use strum_macros::EnumString;
 
+pub const DOCOPTS: [&'static str; 4] = ["title", "icon", "description", "preview"];
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Schema {
     pub base: PathBuf,
     pub name: String,
     objects: HashMap<String, Object>,
-    image_types: Vec<ObjectType>,
+    image_types: Vec<String>,
     file_types: Vec<String>,
-    object_types: Vec<ObjectType>,
+    object_types: Vec<String>,
     reference_types: Vec<String>,
     document_types: Vec<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Object {
-    name: String,
-    ty: ObjectType,
-    title: String,
-    description: String,
-    preview: Preview,
-    icon: String,
-    fields: Vec<Field>,
-    actions: Vec<Action>,
+    pub name: String,
+    pub base_type: BaseType,
+    pub title: String,
+    pub description: String,
+    pub preview: Preview,
+    pub icon: String,
+    pub fields: Vec<Field>,
+    pub actions: Vec<Action>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, EnumString, Default)]
 #[serde(rename_all = "snake_case")]
@@ -41,10 +43,44 @@ pub enum ObjectType {
     Custom(String),
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, EnumString, Default)]
+#[serde(rename_all = "snake_case")]
+// #[serde(tag = "_t", content = "_c")]
+#[strum(serialize_all = "snake_case")]
+pub enum BaseType {
+    #[strum(serialize = "doc", serialize = "document")]
+    Doc,
+    #[default]
+    Object,
+    Image,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, EnumString, Default)]
+#[serde(rename_all = "snake_case")]
+#[serde(tag = "_t", content = "_c")]
+#[strum(serialize_all = "snake_case")]
+pub enum FieldType {
+    Array,
+    Bloc,
+    #[strum(serialize = "bool", serialize = "boolean")]
+    Boolean,
+    Date,
+    Datetime,
+    File,
+    Geopoint,
+    Image,
+    Reference,
+    Slug,
+    Span,
+    #[default]
+    String,
+    Text,
+    Url,
+}
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Field {
     name: String,
-    ty: FieldType,
+    field_type: FieldType,
     title: String,
     description: String,
     hidden: bool,
@@ -58,8 +94,8 @@ pub struct Field {
     validation: FieldValidations,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FieldType {}
-#[derive(Debug, Clone, Serialize, Deserialize)]
+//pub struct FieldType {}
+//#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FieldOptions {}
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FieldValidations {}
@@ -85,20 +121,21 @@ impl Schema {
     }
 
     pub fn add_object(&mut self, o: Object) {
-        let ty = o.ty.clone();
-        match ty {
-            ObjectType::Image => self.image_types.push(ty),
-            _ => self.object_types.push(ty),
+        let bt = o.base_type.clone();
+        let name = o.name.clone();
+        self.objects.insert(name.to_string(), o);
+        match bt {
+            BaseType::Image => self.image_types.push(name),
+            _ => self.object_types.push(name),
         }
-        self.objects.insert(o.name.to_string(), o);
     }
 }
 
 impl Object {
-    pub fn new(name: &str, ty: ObjectType) -> Self {
+    pub fn new(name: &str, base_type: BaseType) -> Self {
         Self {
             name: name.to_string(),
-            ty,
+            base_type,
             ..Default::default() /*title: "".to_string(),
                                  description: "".to_string(),
                                  preview: Preview::new(),

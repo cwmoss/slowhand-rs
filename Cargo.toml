@@ -40,3 +40,4 @@ anyhow = "1.0.100"
 tokio-stream = { version = "0.1.18", features = ["io-util", "sync"] }
 tokio-util = { version = "0.7.18", features = ["io"] }
 futures-util = "0.3.31"
+async-graphql = "7.2.1"
