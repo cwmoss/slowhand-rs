@@ -1,8 +1,11 @@
+.graphql action 
+
 defaultImage image {
+    .title "der default title"
     caption
 }
 
-castMember {
+castMember object "Schauspieler" {
     .preview {
         title js=#"`${o.person?.title} (imdb ${o.externalId})`"#
         subtitle characterName
@@ -54,7 +57,7 @@ person doc icon=person {
 }
 
 screening doc {
-    .title
+    title
     movie ref to=movie
     published boolean
     location geopoint

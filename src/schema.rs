@@ -53,11 +53,11 @@ pub enum BaseType {
     #[default]
     Object,
     Image,
+    Action,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, EnumString, Default)]
 #[serde(rename_all = "snake_case")]
-#[serde(tag = "_t", content = "_c")]
 #[strum(serialize_all = "snake_case")]
 pub enum FieldType {
     Array,
@@ -77,7 +77,7 @@ pub enum FieldType {
     Text,
     Url,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Field {
     name: String,
     field_type: FieldType,
@@ -93,18 +93,21 @@ pub struct Field {
     initital_value: String,
     validation: FieldValidations,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 //pub struct FieldType {}
 //#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FieldOptions {}
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct FieldValidations {}
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Action {}
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Preview {
-    select: Vec<String>,
-    fun: String,
+    pub title: String,
+    pub subtitle: Option<String>,
+    pub media: Option<String>,
+    pub select: Vec<String>,
+    pub fun: Option<String>,
 }
 impl Schema {
     pub fn new(name: &str, base: &PathBuf) -> Self {
@@ -147,10 +150,20 @@ impl Object {
 }
 
 impl Preview {
-    pub fn new() -> Self {
+    pub fn new(title: String) -> Self {
         Self {
-            select: [].to_vec(),
-            fun: "".to_string(),
+            title,
+            ..Default::default()
+        }
+    }
+}
+
+impl Field {
+    pub fn new(name: &str, field_type: FieldType) -> Self {
+        Self {
+            name: name.to_string(),
+            field_type,
+            ..Default::default()
         }
     }
 }

@@ -43,7 +43,7 @@ pub struct AppState {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conf = Config::new();
     let open_browser = false;
-    let bind_host = "localhost";
+    let bind_host = "127.0.0.1";
     let port = 10365;
     // let http_prefix = format!("{}/", args.prefix.trim_end_matches('/'));
     let http_prefix = "/";
