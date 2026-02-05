@@ -35,8 +35,9 @@ async fn get_doc(
     Path((dsname, id)): Path<(String, String)>,
 ) -> impl axum::response::IntoResponse {
     // let ds = app_state.datasets.get(&dsname);
+    println!("fetch0 id {}", &id);
     let ds = dataset::Dataset::load(dsname, &app_state.conf.projects, &app_state.conf.var).await;
-
+    dbg!("fetch id", &id);
     return Json(ds.store.get_doc(id).await);
 }
 

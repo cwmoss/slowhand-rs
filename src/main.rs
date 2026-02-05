@@ -65,6 +65,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let router = Router::new()
         .nest("/data", data_router)
+        .layer(axum_server_timing::ServerTimingLayer::new("HelloService"))
         // .route("/_assets/{*file}", get(static_handler))
         // .route("/stats", get(stats_handler))
         // .route("/", get(if_single_album_redirect))
