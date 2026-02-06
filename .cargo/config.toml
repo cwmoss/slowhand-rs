@@ -1,0 +1,2 @@
+# [target.'cfg(any(target_os = "windows", target_os = "macos"))']
+# linker = "rust-lld"

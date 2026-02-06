@@ -1,70 +1,85 @@
-.graphql action 
-
-defaultImage image {
-    .title "der default title"
-    caption
+/- graphql {
+    action 
 }
 
-castMember object "Schauspieler" {
-    .preview {
-        title js=#"`${o.person?.title} (imdb ${o.externalId})`"#
+image defaultImage {
+    title "der default title"
+    string caption
+}
+
+object castMember "Schauspieler" {
+    preview {
+        title js=#"${o.person?.title} (imdb ${o.externalId})"#
         subtitle characterName
         media person.media
     }
-    characterName
-    person ref to=person
-    externalId number
-    externalCreditId
+    string characterName
+    ref person to=person
+    number externalId
+    string externalCreditId
 }
 
-crewMember {
-    .preview {
+object crewMember {
+    preview {
         title person.title
         subtitle characterName js=#"`${o.job} - ${o.department}`"#
         media person.media
     }
-    department
-    job
-    person ref to=person
-    externalId number
-    externalCreditId
+    string department
+    string job
+    ref person to=person
+    number externalId
+    string externalCreditId
 }
 
-balance title=finanial {
-    costs number
-    revenue number
+object balance title=finanial {
+    number costs 
+    number revenue 
 }
 
-movie doc {
-    .preview title=title media=poster
-    title
+doc movie  {
+    preview title=title media=poster
+
+    fieldsets {
+        name social "Social media handles"
+    }
+
+    string title
     slug slug source=title
-    overview text
-    releaseDate datetime
-    externalId number
-    popularity number
-    poster defaultImage hotspot=#true
-    castMembers array of=castMember
-    crewMembers array of=crewMember
-    balance balance
+    text overview
+    datetime releaseDate 
+    number externalId 
+    number popularity 
+    // todo
+    //object poster defaultImage hotspot=#true
+    //- defaultImage poster hotspot=#true
+    //+defaultImage poster hotspot=#true
+    defaultImage poster  hotspot=#true
+    // (defaultImage)object poster hotspot=#true
+
+    array castMembers  of=castMember
+    array crewMembers  of=crewMember
+    // todo
+    > balance balance
 }
 
-person doc icon=person {
-    .preview title="name slug.current"
-    name
+doc person icon=person {
+    preview title="name slug.current"
+    string name
     slug slug source=name
-    image defaultImage hotspot=#true
+    // todo
+    defaultImage image  hotspot=#true
 }
 
-screening doc {
-    title
-    movie ref to=movie
-    published boolean
-    location geopoint
-    beginAt datetime
-    endsAt datetime
-    allowedGuests list=members,fields,anyone layout=radio
-    infoUrl url
-    ticket file
+doc screening {
+    string title
+    ref movie  to=movie
+    boolean published 
+    geopoint location 
+    datetime beginAt 
+    datetime endsAt 
+    string allowedGuests list=members,fields,anyone layout=radio
+    url infoUrl 
+    file ticket 
 }
 

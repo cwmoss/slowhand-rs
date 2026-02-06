@@ -19,7 +19,7 @@ impl Dataset {
             .await
             .unwrap();
         let conn = db.connect().unwrap();
-        let schema = schema::Schema::load_from_kdl(&name, &base);
+        let schema = schema::Schema::load_kdl(&name, &base);
         if let Err(e) = &schema {
             println!("schema loading failed for {}: {}", &name, e);
         }

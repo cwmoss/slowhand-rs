@@ -9,17 +9,17 @@ default-run = "slowhand"
 name = "slowhand"
 path = "src/main.rs"
 
-[[bin]]
-name = "kdl"
-path = "src/sdl/kdl.rs"
+#[[bin]]
+#name = "kdl"
+#path = "src/sdl/kdl.rs"
 
-[[bin]]
-name = "kdlrs"
-path = "src/sdl/kdlrs.rs"
+#[[bin]]
+#name = "kdlrs"
+#path = "src/sdl/kdlrs.rs"
 
-[[bin]]
-name = "styx"
-path = "src/sdl/styx.rs"
+#[[bin]]
+#name = "styx"
+#path = "src/sdl/styx.rs"
 
 [dependencies]
 tokio = { version = "1.49.0", features = ["full"] }

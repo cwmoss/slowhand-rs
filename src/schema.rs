@@ -15,7 +15,7 @@ pub struct Schema {
     objects: HashMap<String, Object>,
     image_types: Vec<String>,
     file_types: Vec<String>,
-    object_types: Vec<String>,
+    pub object_types: Vec<String>,
     reference_types: Vec<String>,
     document_types: Vec<String>,
 }
@@ -53,6 +53,7 @@ pub enum BaseType {
     #[default]
     Object,
     Image,
+    File,
     Action,
 }
 
@@ -69,6 +70,8 @@ pub enum FieldType {
     File,
     Geopoint,
     Image,
+    Number,
+    #[strum(serialize = "ref", serialize = "reference")]
     Reference,
     Slug,
     Span,
@@ -76,6 +79,7 @@ pub enum FieldType {
     String,
     Text,
     Url,
+    Object(String),
 }
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Field {
@@ -131,6 +135,9 @@ impl Schema {
             BaseType::Image => self.image_types.push(name),
             _ => self.object_types.push(name),
         }
+    }
+    pub fn get_object(&self, name: &str) -> Option<&Object> {
+        self.objects.get(name)
     }
 }
 

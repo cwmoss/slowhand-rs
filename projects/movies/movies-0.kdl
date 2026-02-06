@@ -1,0 +1,70 @@
+.graphql action 
+
+defaultImage image {
+    .title "der default title"
+    caption
+}
+
+castMember object "Schauspieler" {
+    .preview {
+        title js=#"`${o.person?.title} (imdb ${o.externalId})`"#
+        subtitle characterName
+        media person.media
+    }
+    characterName
+    person ref to=person
+    externalId number
+    externalCreditId
+}
+
+crewMember {
+    .preview {
+        title person.title
+        subtitle characterName js=#"`${o.job} - ${o.department}`"#
+        media person.media
+    }
+    department
+    job
+    person ref to=person
+    externalId number
+    externalCreditId
+}
+
+balance title=finanial {
+    costs number
+    revenue number
+}
+
+movie doc {
+    .preview title=title media=poster
+    title
+    slug slug source=title
+    overview text
+    releaseDate datetime
+    externalId number
+    popularity number
+    poster defaultImage hotspot=#true
+    castMembers array of=castMember
+    crewMembers array of=crewMember
+    balance balance
+}
+
+person doc icon=person {
+    .preview title="name slug.current"
+    name
+    slug slug source=name
+    image defaultImage hotspot=#true
+}
+
+screening doc {
+    title
+    movie ref to=movie
+    published boolean
+    location geopoint
+    beginAt datetime
+    endsAt datetime
+    allowedGuests list=members,fields,anyone layout=radio
+    infoUrl url
+    ticket file
+}
+
