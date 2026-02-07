@@ -44,3 +44,4 @@ async-graphql = "7.2.1"
 rust-embed = { version = "8.11.0", features = ["axum-ex"] }
 mime_guess = "2.0.5"
 axum-server-timing = "3.0.1"
+async-graphql-axum = "7.2.1"

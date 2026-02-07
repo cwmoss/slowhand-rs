@@ -55,6 +55,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // datasets: HashMap::new(),
         start_time: Instant::now(),
     };
+    // TODO: async wird nicht für das schema gebraucht
+    let graphqlrouter = gql::get_routes(app_state.clone()).await;
     let state = Arc::new(app_state);
     // let data_router = Router::new().route("/schema/{dsname}", get(show_schema));
     let data_router = dataset_handler::get_routes();
@@ -65,6 +67,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let router = Router::new()
         .nest("/data", data_router)
+        .nest("/graphql", graphqlrouter)
         .layer(axum_server_timing::ServerTimingLayer::new("HelloService"))
         // .route("/_assets/{*file}", get(static_handler))
         // .route("/stats", get(stats_handler))
