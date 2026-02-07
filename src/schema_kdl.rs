@@ -47,14 +47,14 @@ impl schema::Schema {
             .collect();
 
         // let mut s = Self::new(name, base);
-        let mut path = base.join(name);
+        let mut path = base.join(name).join(name);
         path.add_extension("kdl");
         let doc_str = fs::read_to_string(path)?;
         Self::parse_kdl(doc_str, name, base)
     }
 
     pub fn parse_kdl(doc_str: String, name: &str, base: &PathBuf) -> Result<Self> {
-        let mut s = Self::new(name, base);
+        let mut s = Self::new(name, base.clone());
         let doc: KdlDocument = doc_str.parse()?;
         for node in doc.nodes().into_iter() {
             dbg!(node.name());
@@ -155,6 +155,9 @@ fn handle_preview(node: &KdlNode) -> schema::Preview {
     if let Some(e) = node.entry("media") {
         preview.media = Some(e.value().as_string().unwrap_or_default().to_string());
     }
+    if let Some(e) = node.entry("js") {
+        preview.fun = Some(e.value().as_string().unwrap_or_default().to_string());
+    }
     if let Some(doc) = node.children() {
         if let Some(e) = doc.get_arg("title") {
             preview.title = e.as_string().unwrap_or_default().to_string();
@@ -164,6 +167,9 @@ fn handle_preview(node: &KdlNode) -> schema::Preview {
         }
         if let Some(e) = doc.get_arg("media") {
             preview.media = Some(e.as_string().unwrap_or_default().to_string());
+        }
+        if let Some(e) = doc.get_arg("js") {
+            preview.fun = Some(e.as_string().unwrap_or_default().to_string());
         }
     }
     dbg!("preview handled", &preview);

@@ -114,10 +114,10 @@ pub struct Preview {
     pub fun: Option<String>,
 }
 impl Schema {
-    pub fn new(name: &str, base: &PathBuf) -> Self {
+    pub fn new(name: &str, base: PathBuf) -> Self {
         Self {
             name: name.to_string(),
-            base: base.join(name),
+            base: base,
             objects: HashMap::new(),
             object_types: [].to_vec(),
             image_types: [].to_vec(),
@@ -133,6 +133,8 @@ impl Schema {
         self.objects.insert(name.to_string(), o);
         match bt {
             BaseType::Image => self.image_types.push(name),
+            BaseType::Doc => self.document_types.push(name),
+            BaseType::File => self.file_types.push(name),
             _ => self.object_types.push(name),
         }
     }

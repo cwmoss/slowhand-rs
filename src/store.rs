@@ -14,7 +14,32 @@ pub struct Store {
     conn: Connection,
 }
 
+// https://gist.github.com/green-s/fbd0d374b290781ac9b3f8ff03e3245d
 impl Store {
+    pub async fn get_docs(&self, ids: Vec<&str>) -> Vec<Doc> {
+        let placeholder = ids
+            .iter()
+            .map(|_| "?".to_string())
+            .collect::<Vec<String>>()
+            .join(",");
+        let mut res = Vec::new();
+        let q = format!("SELECT body as d FROM docs WHERE _id IN ({placeholder})");
+        dbg!(&q);
+        let Some(mut rows) = self.conn.query(q, ids).await.ok() else {
+            return res;
+        };
+
+        while let Some(row) = rows.next().await.unwrap() {
+            // if let Some(r) = row {
+            // dbg!(&row);
+            let j = row.get_value(0).unwrap();
+            let jt = j.as_text().unwrap();
+            let doc: Doc = serde_json::from_str(jt).ok().unwrap();
+            res.push(doc);
+        }
+        res
+    }
+
     pub async fn get_doc(&self, id: String) -> Option<Doc> {
         let rows = self
             .conn

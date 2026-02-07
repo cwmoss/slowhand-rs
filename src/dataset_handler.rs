@@ -38,7 +38,7 @@ async fn get_doc(
     println!("fetch0 id {}", &id);
     let ds = dataset::Dataset::load(dsname, &app_state.conf.projects, &app_state.conf.var).await;
     dbg!("fetch id", &id);
-    return Json(ds.store.get_doc(id).await);
+    return Json(ds.store.get_docs(id.split(",").collect()).await);
 }
 
 // https://github.com/tokio-rs/axum/blob/main/axum-extra/src/json_lines.rs#L111

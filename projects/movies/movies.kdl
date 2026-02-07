@@ -9,7 +9,7 @@ image defaultImage {
 
 object castMember "Schauspieler" {
     preview {
-        title js=#"${o.person?.title} (imdb ${o.externalId})"#
+        title #"${o.person?.title} (imdb ${o.externalId})"#
         subtitle characterName
         media person.media
     }
@@ -22,7 +22,7 @@ object castMember "Schauspieler" {
 object crewMember {
     preview {
         title person.title
-        subtitle characterName js=#"`${o.job} - ${o.department}`"#
+        subtitle (js)#"`${o.job} - ${o.department}`"#
         media person.media
     }
     string department
