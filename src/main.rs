@@ -3,6 +3,7 @@ pub mod dataset;
 pub mod dataset_handler;
 pub mod gql;
 pub mod schema;
+pub mod schema_gql;
 pub mod schema_kdl;
 pub mod store;
 

@@ -60,7 +60,7 @@ doc movie  {
     array castMembers  of=castMember
     array crewMembers  of=crewMember
     // todo
-    > balance balance
+    balance balance
 }
 
 doc person icon=person {

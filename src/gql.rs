@@ -29,13 +29,25 @@ pub struct Doc {
 }
 
 pub async fn get_routes(state: AppState) -> Router<Arc<AppState>> {
-    let r = Router::new().route(
-        "/{dsname}",
-        get(graphiql).post_service(get_graphql_service(&state, "egal".to_string()).await),
-    );
+    let r = Router::new()
+        .route(
+            "/{dsname}",
+            get(graphiql).post_service(get_graphql_service(&state, "movies".to_string()).await),
+        )
+        .route("/{dsname}/sdl", get(sdl));
     r
 }
+async fn sdl(
+    State(app_state): State<Arc<AppState>>,
+    Path(dsname): Path<String>,
+) -> impl IntoResponse {
+    let ds = dataset::Dataset::load(dsname, &app_state.conf.projects, &app_state.conf.var).await;
 
+    //.register(mutatation_root)
+    //.data(Storage::default())
+    let schema = ds.schema.unwrap().build_gql_schema().finish().unwrap();
+    format!("{}", &schema.sdl())
+}
 async fn graphiql(Path(dsname): Path<String>) -> impl IntoResponse {
     let endpoint = format!("/graphql/{}", dsname);
     Html(
@@ -52,6 +64,11 @@ async fn get_graphql_service(
     dbg!("service dsname", &dsname);
     let ds = dataset::Dataset::load(dsname, &app_state.conf.projects, &app_state.conf.var).await;
 
+    //.register(mutatation_root)
+    //.data(Storage::default())
+    let schema = ds.schema.unwrap().build_gql_schema().finish().unwrap();
+    GraphQL::new(schema)
+    /*
     let mut book = Object::new("Book")
         .description("A book that will be stored.")
         .field(Field::new("_id", TypeRef::named_nn(TypeRef::ID), |ctx| {
@@ -141,30 +158,5 @@ async fn get_graphql_service(
     //.data(Storage::default())
     let schema = schemab.finish().unwrap();
     GraphQL::new(schema)
-}
-
-pub fn resolve(ctx: ResolverContext<'_>) -> FieldFuture<'_> {
-    FieldFuture::new(async move {
-        dbg!(
-            "getBookField via resolve",
-            ctx.parent_value,
-            ctx.path_node,
-            ctx.field()
-        );
-        let book = ctx.parent_value.try_downcast_ref::<Doc>()?;
-        Ok(Some(Value::from(book.d["name"].to_owned())))
-    })
-}
-
-pub fn resolve_entity(ctx: ResolverContext<'_>) -> FieldFuture<'_> {
-    FieldFuture::new(async move {
-        dbg!(
-            "entity resolver",
-            ctx.parent_value,
-            ctx.path_node,
-            ctx.field()
-        );
-        let book = ctx.parent_value.try_downcast_ref::<Doc>()?;
-        Ok(Some(Value::from(book.d["name"].to_owned())))
-    })
+    */
 }

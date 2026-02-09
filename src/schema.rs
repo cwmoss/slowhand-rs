@@ -12,12 +12,12 @@ pub const DOCOPTS: [&'static str; 4] = ["title", "icon", "description", "preview
 pub struct Schema {
     pub base: PathBuf,
     pub name: String,
-    objects: HashMap<String, Object>,
+    pub objects: HashMap<String, Object>,
     image_types: Vec<String>,
     file_types: Vec<String>,
     pub object_types: Vec<String>,
     reference_types: Vec<String>,
-    document_types: Vec<String>,
+    pub document_types: Vec<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Object {
@@ -83,19 +83,19 @@ pub enum FieldType {
 }
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Field {
-    name: String,
-    field_type: FieldType,
-    title: String,
-    description: String,
-    hidden: bool,
-    read_only: bool,
-    component: String,
+    pub name: String,
+    pub field_type: FieldType,
+    pub title: String,
+    pub description: String,
+    pub hidden: bool,
+    pub read_only: bool,
+    pub component: String,
 
-    to: Vec<String>,
-    of: Vec<String>,
-    options: FieldOptions,
-    initital_value: String,
-    validation: FieldValidations,
+    pub to: Vec<String>,
+    pub of: Vec<String>,
+    pub options: FieldOptions,
+    pub initital_value: String,
+    pub validation: FieldValidations,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 //pub struct FieldType {}
@@ -140,6 +140,13 @@ impl Schema {
     }
     pub fn get_object(&self, name: &str) -> Option<&Object> {
         self.objects.get(name)
+    }
+
+    pub fn documents(&self) -> Vec<&Object> {
+        self.document_types
+            .iter()
+            .map(|t| self.objects.get(t).unwrap())
+            .collect()
     }
 }
 
