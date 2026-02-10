@@ -58,6 +58,16 @@ impl Store {
     }
 
     pub async fn create_or_replace(&self, doc: Doc) -> Result<u64> {
+        /*
+        if ($keep_modify_date) {
+            if (!isset($row['_updatedAt']) || !$row['_updatedAt']) {
+                $row['_updatedAt'] = date("Y-m-d H:i:s");
+            }
+        } else {
+            $row['_updatedAt'] = date("Y-m-d H:i:s");
+        }
+        $row = $this->defaults($row);
+        */
         if self.exists(&doc._id).await {
             println!("update");
             self.update(doc).await
@@ -80,7 +90,6 @@ impl Store {
         Ok(rows_affected)
     }
     /*
-
     conn.execute("INSERT INTO users (username) VALUES (?)", ("alice",))
             .await?;
         let rows_affected = conn
@@ -88,8 +97,6 @@ impl Store {
             .await?;
 
         println!("Inserted {} rows", rows_affected);
-
-
     */
     pub async fn insert(&self, doc: Doc) -> Result<u64> {
         let body = serde_json::to_string(&doc).unwrap();

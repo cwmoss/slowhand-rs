@@ -8,10 +8,12 @@ pub struct Dataset {
     pub name: String,
     pub schema: Option<Schema>,
     pub store: Store,
+    pub assets: PathBuf,
 }
 
 impl Dataset {
     pub async fn load(name: String, base: &PathBuf, var: &PathBuf) -> Self {
+        Self::setup_paths(&name, var);
         let mut db_path = var.join(name.clone());
         db_path.add_extension("db");
         let db = Builder::new_local(&db_path.to_string_lossy().to_string())
@@ -25,8 +27,12 @@ impl Dataset {
         }
         Self {
             name: name.clone(),
+            assets: var.join("assets").join(name.clone()),
             schema: schema.ok(),
             store: Store::new(name, conn).await,
         }
+    }
+    pub fn setup_paths(name: &String, var: &PathBuf) {
+        std::fs::create_dir_all(var.join("assets").join(name)).unwrap();
     }
 }

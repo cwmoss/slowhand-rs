@@ -3,3 +3,5 @@
 testdata/
 *.db*
 node_modules/
+var/
+test.jpg

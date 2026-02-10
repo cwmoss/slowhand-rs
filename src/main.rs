@@ -1,3 +1,4 @@
+pub mod assets;
 pub mod config;
 pub mod dataset;
 pub mod dataset_handler;
@@ -69,6 +70,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let router = Router::new()
         .nest("/data", data_router)
         .nest("/graphql", graphqlrouter)
+        .nest("/assets", assets::get_routes())
         .layer(axum_server_timing::ServerTimingLayer::new("HelloService"))
         // .route("/_assets/{*file}", get(static_handler))
         // .route("/stats", get(stats_handler))
