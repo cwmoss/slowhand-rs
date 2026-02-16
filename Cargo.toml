@@ -9,9 +9,9 @@ default-run = "slowhand"
 name = "slowhand"
 path = "src/main.rs"
 
-#[[bin]]
-#name = "kdl"
-#path = "src/sdl/kdl.rs"
+[[bin]]
+name = "t1"
+path = "src/learn/t1.rs"
 
 #[[bin]]
 #name = "kdlrs"

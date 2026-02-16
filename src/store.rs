@@ -40,20 +40,21 @@ impl Store {
         res
     }
 
-    pub async fn get_doc(&self, id: String) -> Option<Doc> {
+    pub async fn get_doc(&self, id: String) -> Result<Option<Doc>, serde_json::error::Error> {
         let rows = self
             .conn
             .query("SELECT body as d FROM docs WHERE _id=?", ((id),))
             .await
             .ok();
-
-        if let Some(row) = rows?.next().await.ok() {
-            let j = row?.get_value(0).unwrap();
+        let Some(mut rows) = rows else {
+            return Ok(None);
+        };
+        if let Some(Some(row)) = rows.next().await.ok() {
+            let j = row.get_value(0).unwrap();
             let jt = j.as_text().unwrap();
-            let doc: Doc = serde_json::from_str(jt).ok().unwrap();
-            Some(doc)
+            serde_json::from_str(jt)
         } else {
-            None
+            Ok(None)
         }
     }
 
@@ -134,6 +135,11 @@ impl Store {
     }
 }
 
+trait Storable {
+    fn id(&self) -> &String;
+    fn ty(&self) -> &String;
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Doc {
     #[serde(default = "Doc::gen_id")]
@@ -143,7 +149,43 @@ pub struct Doc {
     #[serde(flatten)]
     pub d: Value,
 }
-pub struct DbDoc(String);
+
+impl Storable for Doc {
+    fn id(&self) -> &String {
+        &self._id
+    }
+    fn ty(&self) -> &String {
+        &self._type
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Asset {
+    _id: String,
+    _type: String,
+    asset_id: String,
+    extension: String,
+    mime_type: String,
+    original_filename: String,
+    path: String,
+    upload_id: String,
+    size: usize,
+    sha1hash: String,
+    url: String,
+    width: usize,
+    height: usize,
+    #[serde(flatten)]
+    d: Option<Value>,
+}
+
+impl Storable for Asset {
+    fn id(&self) -> &String {
+        &self._id
+    }
+    fn ty(&self) -> &String {
+        &self._type
+    }
+}
 
 impl Doc {
     pub fn gen_id() -> String {

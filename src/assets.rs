@@ -19,6 +19,9 @@ pub fn get_routes() -> Router<Arc<AppState>> {
     r
 }
 
+// https://www.sanity.io/docs/apis-and-sdks/presenting-images
+// https://www.sanity.io/docs/apis-and-sdks/image-urls
+
 struct ImageAsset {
     _id: String,
     _type: String,
